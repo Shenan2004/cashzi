@@ -1,34 +1,48 @@
 const express = require("express");
 const cors = require("cors");
-const pool = require("./db"); // We will create this db.js file next
+const pool = require("./db");
+const errorHandler = require("./middleware/errorHandler");
 require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
-app.use(express.json()); // Allows us to parse JSON bodies
+app.use(cors({
+    origin: process.env.CLIENT_URL || "http://localhost:3000",
+    credentials: true
+}));
+app.use(express.json());
 
 // ROUTES
 
-// 1. Test Route (Check if server is running)
+// Health check
 app.get("/", (req, res) => {
-    res.json({ message: "Server is running on port 5000" });
+    res.json({ message: "Cashzi API is running." });
 });
 
-// 2. Database Connection Test
+// Database connection test
 app.get("/db-test", async (req, res) => {
     try {
         const result = await pool.query("SELECT NOW()");
         res.json({ message: "Database Connected!", time: result.rows[0].now });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Server Error");
+        res.status(500).json({ error: "Database connection failed." });
     }
 });
 
+// API Route Groups
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/categories", require("./routes/categories"));
+app.use("/api/transactions", require("./routes/transactions"));
+app.use("/api/analytics", require("./routes/analytics"));
+app.use("/api/budgets", require("./routes/budgets"));
+
+// Global Error Handler (must be last)
+app.use(errorHandler);
+
 // Start Server
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Cashzi server is running on port ${PORT}`);
 });
