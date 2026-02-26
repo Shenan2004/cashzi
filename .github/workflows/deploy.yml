@@ -39,6 +39,10 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: frontend
+        env:
+          # Set this secret in: GitHub repo → Settings → Secrets → Actions
+          # Value: your Render backend URL, e.g. https://cashzi-api.onrender.com
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

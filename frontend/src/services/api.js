@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+// In production (GitHub Pages), VITE_API_URL must be set to your Render backend URL.
+// In local dev, fall back to the Vite proxy (/api → localhost:5001).
+const baseURL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -21,7 +27,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('cashzi_token');
       localStorage.removeItem('cashzi_user');
-      window.location.href = '/login';
+      window.location.href = '/cashzi/#/login';
     }
     return Promise.reject(error);
   }

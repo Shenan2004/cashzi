@@ -5,6 +5,8 @@ export default defineConfig({
   base: '/cashzi/',
   plugins: [react()],
   server: {
+    host: true,       // bind to 0.0.0.0 so other devices can reach it
+    port: 5173,
     proxy: {
       '/api': {
         target: 'http://localhost:5001',
