@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
@@ -289,7 +290,7 @@ export default function Dashboard() {
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <h3 style={{ fontSize: '0.95rem', fontWeight: 700 }}>🕐 Recent Activity</h3>
-          <a href="/transactions" style={{ fontSize: '0.8rem', color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>View all →</a>
+          <Link to="/transactions" style={{ fontSize: '0.8rem', color: 'var(--color-accent)', textDecoration: 'none', fontWeight: 600 }}>View all →</Link>
         </div>
         {recent.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-text-dim)' }}>

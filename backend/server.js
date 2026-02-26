@@ -4,21 +4,29 @@ const pool = require("./db");
 const errorHandler = require("./middleware/errorHandler");
 require("dotenv").config();
 
+// Catch ALL uncaught errors so nothing is swallowed silently
+process.on("unhandledRejection", (reason, promise) => {
+    console.error("🔴 UNHANDLED REJECTION at:", promise, "reason:", reason);
+});
+process.on("uncaughtException", (err) => {
+    console.error("🔴 UNCAUGHT EXCEPTION:", err);
+});
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+
 // Middleware
-const allowedOrigins = [
-    "https://Shenan2004.github.io",    // GitHub Pages
-    "http://localhost:5173",            // Vite local dev
-    "http://localhost:3000",            // CRA local dev fallback
-    ...(process.env.CLIENT_URL ? [process.env.CLIENT_URL] : [])
-];
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, curl, Postman)
+        // No origin = curl / Postman / server-side — always allow
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
+        // Allow any localhost port (Vite picks a dynamic port)
+        if (/^http:\/\/localhost(:\d+)?$/.test(origin)) return callback(null, true);
+        // Allow GitHub Pages production origin
+        if (origin === "https://Shenan2004.github.io") return callback(null, true);
+        // Allow any extra origin set via env
+        if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) return callback(null, true);
         callback(new Error(`CORS blocked: ${origin}`));
     },
     credentials: true
