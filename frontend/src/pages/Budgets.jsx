@@ -92,7 +92,7 @@ function getBarColor(pct) {
 }
 
 function fmt(n) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'LKR' }).format(n);
 }
 
 export default function Budgets() {
